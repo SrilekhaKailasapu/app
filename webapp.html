@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1{
+            text-align: center;
+            color: brown;
+        }
+        .balance{
+            color: rgb(0, 55, 255);
+        }
+        button{
+            border-radius: 5px;
+            background-color: rgb(230, 13, 168);
+            color: aliceblue;
+            border: none;
+            padding: 5px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 6px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .delete-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .balance {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        #income {
+            font-size: medium;
+        }
+        #description{
+            font-size: medium;
+        }
+        #amount{
+            font-size: medium;
+        }
+    </style>
+</head>
+<body>
+    <h1>Personal Finance Manager</h1>
+     
+    <div class="balance">
+        <h2>Balance: ₹<span id="balance">0.00</span></h2>
+    </div>
+   
+    <div>
+        <label for="description"></label>
+        <input type="text" id="description" placeholder="Description">
+        
+        <label for="amount"></label>
+        <input type="number" id="amount" placeholder="Amount">
+
+        <label for="income"></label>
+        <select name="income" id="income">
+            <option value="Income">Income</option>
+            <option value="Expense">Expense</option>
+        </select>
+
+        <button onclick="addTransaction()">Add Transaction</button>
+    </div>
+
+    <table id="transaction-table"  cellspacing="2px" cellpadding="3px">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Amount (₹)</th>
+                <th>Type</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="transaction-body"></tbody>
+    </table>
+
+    <script>
+    
+        let transactions = [];
+        function displayTransactions() {
+            const transactionBody = document.getElementById('transaction-body');
+            const balanceElement = document.getElementById('balance');
+            transactionBody.innerHTML = ''; 
+
+            let balance = 0; 
+
+           
+            transactions.forEach((transaction, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${transaction.description}</td>
+                    <td>₹${transaction.amount.toFixed(2)}</td>
+                    <td>${transaction.type}</td>
+                    <td><button class="delete-btn" onclick="deleteTransaction(${index})">Delete</button></td>
+                `;
+                transactionBody.appendChild(row);
+
+              
+                if (transaction.type === 'Income') {
+                    balance += transaction.amount;
+                } else if (transaction.type === 'Expense') {
+                    balance -= transaction.amount;
+                }
+            });
+
+            balanceElement.textContent = balance.toFixed(2);
+        }
+
+      
+        function addTransaction() {
+            const description = document.getElementById('description').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const type = document.getElementById('income').value;
+
+            if (description === '' || isNaN(amount)) {
+                alert('Please enter both description and amount');
+                return;
+            }
+            transactions.push({ description, amount, type });
+            document.getElementById('description').value = '';
+            document.getElementById('amount').value = '';
+
+            displayTransactions();
+        }
+
+        function deleteTransaction(index) {
+            transactions.splice(index, 1); 
+
+            displayTransactions();
+        }
+
+       
+    </script>
+   
+</body>
+</html>
